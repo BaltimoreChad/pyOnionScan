@@ -128,7 +128,7 @@ def process_results(onion, json_response):
         os.mkdir("onionscan_results")
 
     # write out the JSON results of the scan
-    with open(f"{'onionscan_results'}\{onion}.json", "wb") as fd:
+    with open(f"{'onionscan_results'}/{onion}.json", "wb") as fd:
         fd.write(json_response)
 
     # look for additional .onion domains to add to our scan list
