@@ -41,6 +41,7 @@ def get_onion_list():
 # Stores an onion in the master list of onions.
 #
 def store_onion(onion):
+    onion = onion.decode('utf8')
     print(f"[++] Storing {onion} in master list.")
 
     with codecs.open("onion_master_list.txt", "ab", encoding="utf8") as fd:
@@ -53,6 +54,7 @@ def store_onion(onion):
 # Runs onion scan as a child process
 #
 def run_onionscan(onion):
+    onion = onion.decode('utf8')
     print(f"[*] Onionscanning {onion}")
 
     # fire up onionscan
@@ -122,14 +124,13 @@ def handle_timeout(process, onion):
 def process_results(onion, json_response):
     global onions
     global session_onions
-
+    onion = onion.decode('utf8')
     # create our output folder if necessary
     if not os.path.exists("onionscan_results"):
         os.mkdir("onionscan_results")
 
     # write out the JSON results of the scan
-    onion_decoded = onion.decode('utf8')
-    with open(f"{'onionscan_results'}/{onion_decoded}.json", "wb") as fd:
+    with open(f"{'onionscan_results'}/{onion}.json", "wb") as fd:
         fd.write(json_response)
 
     # look for additional .onion domains to add to our scan list
@@ -139,7 +140,7 @@ def process_results(onion, json_response):
     if scan_result['identifierReport']['linkedOnions'] is not None:
         add_new_onions(scan_result['identifierReport']['linkedOnions'])
 
-    if scan_result['identifierReport']['relatedOnionDomainds'] is not None:
+    if scan_result['identifierReport']['relatedOnionDomains'] is not None:
         add_new_onions(scan_result['identifierReport']['relatedOnionDomains'])
 
     if scan_result['identifierReport']['relatedOnionServices'] is not None:
@@ -157,7 +158,7 @@ def add_new_onions(new_onion_list):
 
     for linked_onion in new_onion_list:
         if linked_onion not in onions and linked_onion.endswith(".onion"):
-            print(f"[++] Discovered new .onion => {linked_onion}")
+            print(f"[++] Discovered new .onion => {linked_onion.decode('utf8')}")
 
             onions.append(linked_onion)
             session_onions.append(linked_onion)
@@ -183,7 +184,7 @@ while count < len(onions):
     # grab a new onion to scan
     print(f"[*] Running {count:d} of {len(onions):d}.")
     onion = session_onions.pop()
-
+    onion = onion.decode('utf8')
     # test to see if we have already retrieved results for this onion
     if os.path.exists(f"onionscan_results/{onion}.json"):
         print(f"[!] Already retrieved {onion}. Skipping.")
