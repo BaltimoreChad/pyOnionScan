@@ -54,7 +54,6 @@ def store_onion(onion):
 # Runs onion scan as a child process
 #
 def run_onionscan(onion):
-    onion = onion.decode('utf8')
     print(f"[*] Onionscanning {onion}")
 
     # fire up onionscan
