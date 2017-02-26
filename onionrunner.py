@@ -155,7 +155,7 @@ def add_new_onions(new_onion_list):
 
     for linked_onion in new_onion_list:
         if linked_onion not in onions and linked_onion.endswith(".onion"):
-            print(f"[++] Discovered new .onion => {linked_onion.decode('utf8')}")
+            print(f"[++] Discovered new .onion => {linked_onion}")
 
             onions.append(linked_onion)
             session_onions.append(linked_onion)
