@@ -56,7 +56,7 @@ def run_onionscan(onion):
     print(f"[*] Onionscanning {onion}")
 
     # fire up onionscan
-    process = subprocess.Popen(["onionscan", "webport=0", "--jsonReport", "--simpleReport=false", onion],
+    process = subprocess.Popen(["onionscan", "-webport 0", "--jsonReport", "--simpleReport=false", onion],
                                stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
     # start the timer and let it run 5 minutes
