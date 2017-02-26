@@ -41,7 +41,6 @@ def get_onion_list():
 # Stores an onion in the master list of onions.
 #
 def store_onion(onion):
-    onion = onion.decode('utf8')
     print(f"[++] Storing {onion} in master list.")
 
     with codecs.open("onion_master_list.txt", "ab", encoding="utf8") as fd:
@@ -123,7 +122,6 @@ def handle_timeout(process, onion):
 def process_results(onion, json_response):
     global onions
     global session_onions
-    onion = onion.decode('utf8')
     # create our output folder if necessary
     if not os.path.exists("onionscan_results"):
         os.mkdir("onionscan_results")
