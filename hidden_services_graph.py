@@ -1,6 +1,6 @@
 import networkx
 
-from lib.helpers import get_file_list, jsonize_file
+from lib.helpers import get_file_list, jsonize_file, get_graph_directory
 
 
 def get_edges(scan_result):
@@ -20,6 +20,7 @@ def get_edges(scan_result):
 
 
 def create_graph():
+    graph_dir = get_graph_directory()
     graph = networkx.DiGraph()
     file_list = get_file_list()
     for json_file in file_list:
@@ -37,7 +38,7 @@ def create_graph():
             for ip in scan_result['ipAddresses']:
                 graph.add_node(ip, {"node_type": "IP"})
                 graph.add_edge(scan_result['hiddenService'], ip)
-    networkx.write_gexf(graph, "onionscan-with-ips.gexf")
+    networkx.write_gexf(graph, f"{graph_dir}/onionscan-with-ips.gexf")
 
 if __name__ == "__main__":
     create_graph()
