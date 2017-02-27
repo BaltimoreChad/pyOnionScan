@@ -11,6 +11,8 @@ import subprocess
 import sys
 import time
 
+from lib.helpers import get_master_list, get_tor_password
+
 onions = []
 session_onions = []
 
@@ -18,14 +20,18 @@ identity_lock = Event()
 identity_lock.set()
 
 
-#
-# Grab the list of onions from our master list file.
-#
 def get_onion_list():
-    # open the master list
-    if os.path.exists("onion_master_list.txt"):
+    """
+    Opens the onion_master_list that is specified in the pyonionscan.cfg file as onion_master_list.  This file can be
+    downloaded from:
+    https://raw.githubusercontent.com/automatingosint/osint_public/master/onionrunner/onion_master_list.txt
 
-        with open("onion_master_list.txt", "rb") as fd:
+    :return list stored_onions:
+    """
+    onion_master_list = get_master_list()
+    if os.path.exists(onion_master_list):
+
+        with open(onion_master_list, "rb") as fd:
 
             stored_onions = fd.read().splitlines()
     else:
@@ -37,29 +43,31 @@ def get_onion_list():
     return stored_onions
 
 
-#
-# Stores an onion in the master list of onions.
-#
 def store_onion(onion):
+    """
+    Writes the specified onion to the onion_master_list that is defined in pyonionscan.cfg.
+
+    :param onion:
+    """
+    onion_master_list = get_master_list()
     print(f"[++] Storing {onion} in master list.")
 
-    with codecs.open("onion_master_list.txt", "ab", encoding="utf8") as fd:
+    with codecs.open(onion_master_list, "ab", encoding="utf8") as fd:
         fd.write(f"{onion}\n")
 
-    return
 
-
-#
-# Runs onion scan as a child process
-#
 def run_onionscan(onion):
+    """
+    Creates a subprocess for the onionscan and then monitors the scan.  A timer of 5 minutes (300) is defined.  If
+    the scan times out, the process is killed.
+
+    :param onion:
+    """
     print(f"[*] Onionscanning {onion}")
 
-    # fire up onionscan
     process = subprocess.Popen(["onionscan", "-webport=0", "--jsonReport", "--simpleReport=false", onion],
                                stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
-    # start the timer and let it run 5 minutes
     process_timer = Timer(300, handle_timeout, args=[process, onion])
     process_timer.start()
 
@@ -70,15 +78,19 @@ def run_onionscan(onion):
     if process_timer.is_alive():
         process_timer.cancel()
         return stdout
-    print("[!!!] Process timed out!")
+    else:
+        print("[!!!] Process timed out!")
+        return None
 
-    return None
 
-
-#
-# Handle a timeout from the onionscan process
-#
 def handle_timeout(process, onion):
+    """
+    If the timeout threshold is reached the process is killed and a new IP is requested from the Tor network.
+
+    :param process:
+    :param onion:
+    :return:
+    """
     global sessions_onions
     global indentity_lock
 
@@ -94,9 +106,9 @@ def handle_timeout(process, onion):
 
     # Now we switch TOR identities to make sure we have a good connection
     with Controller.from_port(port=9051) as torcontrol:
-
+        tor_password = get_tor_password()
         # authenticate to our local TOR Controller
-        torcontrol.authenticate("PythonRocks")
+        torcontrol.authenticate(tor_password)
 
         # send the signal for a new identity
         torcontrol.signal(Signal.NEWNYM)
@@ -116,10 +128,14 @@ def handle_timeout(process, onion):
     return
 
 
-#
-# Processes the JSON result from onionscan.
-#
 def process_results(onion, json_response):
+    """
+    Processes the json_response from the onion scan.
+
+    :param onion:
+    :param json_response:
+    :return:
+    """
     global onions
     global session_onions
     # create our output folder if necessary
@@ -146,10 +162,13 @@ def process_results(onion, json_response):
     return
 
 
-#
-# Handle new onions.
-#
 def add_new_onions(new_onion_list):
+    """
+    If new onions are discovered, add new onions to the onion_master_list via store_onion.
+
+    :param new_onion_list:
+    :return:
+    """
     global onions
     global session_onions
 
@@ -164,37 +183,45 @@ def add_new_onions(new_onion_list):
 
     return
 
-# get a list of onions to process
-onions = get_onion_list()
 
-# randomize the list a bit
-random.shuffle(onions)
-session_onions = list(onions)
+def main():
+    """
+    Our main function.  Retrieves a list of onions to process, shuffles those onions, and then processes each onion.
+    """
+    # get a list of onions to process
+    onions = get_onion_list()
 
-count = 0
+    # randomize the list a bit
+    random.shuffle(onions)
+    session_onions = list(onions)
 
-while count < len(onions):
-    # If the event is cleared we will halt here
-    # otherwise we continue executing
-    identity_lock.wait()
+    count = 0
 
-    # grab a new onion to scan
-    print(f"[*] Running {count:d} of {len(onions):d}.")
-    onion = session_onions.pop()
-    onion = onion.decode('utf8')
-    # test to see if we have already retrieved results for this onion
-    if os.path.exists(f"onionscan_results/{onion}.json"):
-        print(f"[!] Already retrieved {onion}. Skipping.")
-        count += 1
+    while count < len(onions):
+        # If the event is cleared we will halt here
+        # otherwise we continue executing
+        identity_lock.wait()
 
-        continue
-
-    # run the onion scan
-    result = run_onionscan(onion)
-
-    # process the results
-    if result is not None:
-        if len(result):
-            process_results(onion, result)
-
+        # grab a new onion to scan
+        print(f"[*] Running {count:d} of {len(onions):d}.")
+        onion = session_onions.pop()
+        onion = onion.decode('utf8')
+        # test to see if we have already retrieved results for this onion
+        if os.path.exists(f"onionscan_results/{onion}.json"):
+            print(f"[!] Already retrieved {onion}. Skipping.")
             count += 1
+
+            continue
+
+        # run the onion scan
+        result = run_onionscan(onion)
+
+        # process the results
+        if result is not None:
+            if len(result):
+                process_results(onion, result)
+                count += 1
+
+
+if __name__ == "__main__":
+    main()
