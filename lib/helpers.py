@@ -6,6 +6,8 @@ import configparser
 import shodan
 import glob
 
+import sys
+
 config = configparser.ConfigParser()
 config.read('pyonionscan.cfg')
 
@@ -28,8 +30,11 @@ def get_shodan_client():
     :return shodan_client:
     """
     shodan_api_key = config['Shodan']['api_key']
-    shodan_client = shodan.Shodan(shodan_api_key)
-    return shodan_client
+    if shodan_api_key:
+        shodan_client = shodan.Shodan(shodan_api_key)
+        return shodan_client
+    else:
+        sys.exit("Shodan API Key not found.  Please check your config.")
 
 
 def get_file_list():
@@ -39,5 +44,8 @@ def get_file_list():
     :return file_list:
     """
     onionscan_results = config['Paths']['onionscan_results']
-    file_list = glob.glob(f"{onionscan_results}/*.json")
-    return file_list
+    if onionscan_results:
+        file_list = glob.glob(f"{onionscan_results}/*.json")
+        return file_list
+    else:
+        sys.exit("Onionscan results directory not found.  Please check your config.")
