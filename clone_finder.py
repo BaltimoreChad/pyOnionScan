@@ -1,6 +1,8 @@
 import argparse
 import os
 import sys
+
+import numpy
 from sklearn.feature_extraction.text import TfidfVectorizer
 from lib.helpers import get_file_list, get_results_directory, jsonize_file
 
@@ -21,12 +23,12 @@ def parse_onionscan_results():
     return index_pages, hidden_services
 
 
-def page_similarity_transform(index_pages, hidden_services, base_hidden_service):
+def page_similarity_transform(index_pages: list, hidden_services: list, base_hidden_service: str):
     """
 
-    :param index_pages:
-    :param hidden_services:
-    :param base_hidden_service:
+    :param list index_pages:
+    :param list hidden_services:
+    :param str base_hidden_service:
     :return:
     """
     tfidf = TfidfVectorizer().fit_transform(index_pages)
@@ -35,12 +37,12 @@ def page_similarity_transform(index_pages, hidden_services, base_hidden_service)
     return page_similarity_matrix
 
 
-def page_similarity_compare(page_similarity_matrix, hidden_services, base_hidden_service):
+def page_similarity_compare(page_similarity_matrix: numpy.ndarray, hidden_services: list, base_hidden_service: str):
     """
 
-    :param page_similarity_matrix:
-    :param hidden_services:
-    :param base_hidden_service:
+    :param numpy.ndarray page_similarity_matrix:
+    :param list hidden_services:
+    :param str base_hidden_service:
     :return:
     """
     detect_score = 0.9
