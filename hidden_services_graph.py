@@ -5,9 +5,10 @@ from lib.helpers import get_file_list, jsonize_file, get_graph_directory
 
 def get_edges(scan_result):
     """
+    Stores edges (connections) found in the specified scan_result in a list.  Returns list.
 
-    :param scan_result:
-    :return:
+    :param dict scan_result: the jsonized scan result file
+    :return list edges:
     """
     edges = []
     if scan_result.get('linkedSites'):
@@ -20,6 +21,10 @@ def get_edges(scan_result):
 
 
 def create_graph():
+    """
+    Uses the scan results files from onionrunner.py to create a graph file via networkx.  This graph file can be
+    imported into Gephi (https://gephi.org/).
+    """
     graph_dir = get_graph_directory()
     graph = networkx.DiGraph()
     file_list = get_file_list()
