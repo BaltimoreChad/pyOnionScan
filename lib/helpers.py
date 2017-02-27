@@ -9,7 +9,7 @@ import glob
 import sys
 
 config = configparser.ConfigParser()
-config.read('pyonionscan.cfg')
+config.read('conf/pyonionscan.cfg')
 
 
 def jsonize_file(file: str):
