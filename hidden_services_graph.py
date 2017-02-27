@@ -33,7 +33,7 @@ def create_graph():
                 else:
                     graph.add_node(edge, {"node_type": "Clearnet"})
                 graph.add_edge(scan_result['hiddenService'], edge)
-        if scan_result['ipAddresses'] is not None:
+        if scan_result.get('ipAddresses'):
             for ip in scan_result['ipAddresses']:
                 graph.add_node(ip, {"node_type": "IP"})
                 graph.add_edge(scan_result['hiddenService'], ip)
