@@ -6,11 +6,31 @@ import configparser
 import shodan
 import glob
 import os
+
 import sys
 
 config = configparser.ConfigParser()
 config.read('conf/pyonionscan.cfg')
 
+
+def get_master_list():
+    """
+
+    :return list master_list:
+    """
+    return config['Paths']['onion_master_list']
+
+
+def get_tor_password():
+    """
+    Returns tor password from pyonionscan.cfg.  Exits if tor_password is not defined in config.
+    :return str tor_password:
+    """
+    tor_password = config['Tor']['tor_password']
+    if tor_password:
+        return tor_password
+    else:
+        sys.exit("Tor password not defined.  Please check your config!")
 
 def jsonize_file(file: str):
     """
