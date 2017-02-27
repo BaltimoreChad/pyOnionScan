@@ -15,3 +15,5 @@ Part 2: http://www.automatingosint.com/blog/2016/08/dark-web-osint-with-python-p
 Part 3: http://www.automatingosint.com/blog/2016/08/dark-web-osint-with-python-part-three-visualization/
 
 Part 4: http://www.automatingosint.com/blog/2016/09/dark-web-osint-part-four-using-scikit-learn-to-find-hidden-service-clones/
+
+This project uses ConfigParser to hold certain config values.  The file for these values is pyonionscan.cfg.  Before beginning, please be sure to fill in the appropriate values in the config file.
