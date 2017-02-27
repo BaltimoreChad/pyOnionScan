@@ -38,6 +38,6 @@ def get_file_list():
     the list.
     :return file_list:
     """
-    onionscan_results = config['pyOnionScan']['onionscan_results']
+    onionscan_results = config['Paths']['onionscan_results']
     file_list = glob.glob(f"{onionscan_results}/*.json")
     return file_list
