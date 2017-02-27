@@ -49,6 +49,8 @@ def sshkey_shodan_search(key_to_hosts: dict):
         if shodan_result['total'] > 0:
             for hit in shodan_result['matches']:
                 print(f"[!] Hit for {ssh_key} on {hit['ip_str']} for hidden services {','.join(key_to_hosts[ssh_key])}")
+        else:
+            print(f"[!] No Shodan hits for {ssh_key}")
 
 if __name__ == "__main__":
     sshkeys = sshkey_to_hiddenservice()
