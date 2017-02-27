@@ -77,7 +77,9 @@ def main():
         print(f"[*] Target hidden service {base_hidden_service} found.  Loading data now.")
 
     index_pages, hidden_services = parse_onionscan_results()
+    print(type(index_pages), type(hidden_services))
     page_similarity_matrix = page_similarity_transform(index_pages, hidden_services, base_hidden_service)
+    print(type(page_similarity_matrix), type(base_hidden_service))
     page_similarity_compare(page_similarity_matrix, hidden_services, base_hidden_service)
 
 
