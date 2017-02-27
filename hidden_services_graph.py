@@ -10,11 +10,11 @@ def get_edges(scan_result):
     :return:
     """
     edges = []
-    if scan_result['linkedSites']:
+    if scan_result['linkedSites'] is not None:
         edges.extend(scan_result['linkedSites'])
-    if scan_result['relatedOnionDomains']:
+    if scan_result['relatedOnionDomains'] is not None:
         edges.extend(scan_result['relatedOnionDomains'])
-    if scan_result['relatedOnionServices']:
+    if scan_result['relatedOnionServices'] is not None:
         edges.extend(scan_result['relatedOnionServices'])
     return edges
 
@@ -33,7 +33,7 @@ def create_graph():
                 else:
                     graph.add_node(edge, {"node_type": "Clearnet"})
                 graph.add_edge(scan_result['hiddenService'], edge)
-        if scan_result['ipAddresses']:
+        if scan_result['ipAddresses'] is not None:
             for ip in scan_result['ipAddresses']:
                 graph.add_node(ip, {"node_type": "IP"})
                 graph.add_edge(scan_result['hiddenService'], ip)
