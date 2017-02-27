@@ -36,21 +36,19 @@ def sshkey_shodan_search(key_to_hosts: dict):
     for ssh_key in key_to_hosts:
         if len(key_to_hosts[ssh_key]) > 1:
             print(f"[!] SSH Key {ssh_key} is used on multiple hidden services.")
-
             for key in key_to_hosts[ssh_key]:
                 print(f"\t{key}")
 
-            while True:
-                try:
-                    shodan_result = shodan_client.search(ssh_key)
-                    break
-                except:
-                    time.sleep(5)
-                    pass
-            if shodan_result['total'] > 0:
-                for hit in shodan_result['matches']:
-                    print(f"[!] Hit for {ssh_key} on {hit['ip_str']} "
-                          f"for hidden services {','.join(key_to_hosts[ssh_key])}")
+        while True:
+            try:
+                shodan_result = shodan_client.search(ssh_key)
+                break
+            except:
+                time.sleep(5)
+                pass
+        if shodan_result['total'] > 0:
+            for hit in shodan_result['matches']:
+                print(f"[!] Hit for {ssh_key} on {hit['ip_str']} for hidden services {','.join(key_to_hosts[ssh_key])}")
 
 if __name__ == "__main__":
     sshkeys = sshkey_to_hiddenservice()
