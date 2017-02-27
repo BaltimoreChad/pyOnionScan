@@ -38,3 +38,6 @@ def create_graph():
                 graph.add_node(ip, {"node_type": "IP"})
                 graph.add_edge(scan_result['hiddenService'], ip)
     networkx.write_gexf(graph, "onionscan-with-ips.gexf")
+
+if __name__ == "__main__":
+    create_graph()
