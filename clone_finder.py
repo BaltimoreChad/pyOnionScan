@@ -37,7 +37,7 @@ for json_file in file_list:
 
         scan_result = json.load(fd)
 
-        if scan_result['snapshot'] is not None:
+        if scan_result.get('snapshot'):
             index_pages.append(scan_result['snapshot'])
             hidden_services.append(scan_result['hiddenService'])
 
