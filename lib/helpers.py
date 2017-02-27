@@ -32,6 +32,7 @@ def get_tor_password():
     else:
         sys.exit("Tor password not defined.  Please check your config!")
 
+
 def jsonize_file(file: str):
     """
     Takes in a .json file from the output of onionrunner.py, converts it to json, and returns it.
@@ -57,6 +58,18 @@ def get_shodan_client():
         return shodan_client
     else:
         sys.exit("Shodan API Key not found.  Please check your config.")
+
+
+def get_results_directory():
+    """
+    Returns results directory from pyonionscan.cfg.  Exits if onionscan_results is not defined in config.
+    :return:
+    """
+    results_directory = config['Paths']['onionscan_results']
+    if results_directory:
+        return results_directory
+    else:
+        sys.exit("Onionscan results directory not found.  Please check your config.")
 
 
 def get_file_list():
