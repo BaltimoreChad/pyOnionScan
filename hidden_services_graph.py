@@ -10,11 +10,11 @@ def get_edges(scan_result):
     :return:
     """
     edges = []
-    if 'linkedSites' in scan_result:
+    if scan_result.get('linkedSites'):
         edges.extend(scan_result['linkedSites'])
-    if 'relatedOnionDomains' in scan_result:
+    if scan_result.get('relatedOnionDomains'):
         edges.extend(scan_result['relatedOnionDomains'])
-    if 'relatedOnionServices' in scan_result:
+    if scan_result.get('relatedOnionServices'):
         edges.extend(scan_result['relatedOnionServices'])
     return edges
 
